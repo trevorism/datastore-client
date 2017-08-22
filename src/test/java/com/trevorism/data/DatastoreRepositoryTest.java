@@ -32,7 +32,8 @@ public class DatastoreRepositoryTest {
     }
 
     @Test
-    public void list() {
+    public void list() throws InterruptedException {
+        Thread.sleep(1000);
         List<TestEntity> list = repository.list();
         Assert.assertNotNull(list);
         Assert.assertEquals(1, list.size());
