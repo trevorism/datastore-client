@@ -17,6 +17,7 @@ public class DatastoreRepositoryTest {
 
     @Before
     public void setup(){
+        repository.ping();
         TestEntity event = createSampleEvent();
         TestEntity createdEvent = repository.create(event);
         Assert.assertEquals(event.getId(), createdEvent.getId());

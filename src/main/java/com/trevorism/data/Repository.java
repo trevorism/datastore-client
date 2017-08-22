@@ -12,4 +12,5 @@ public interface Repository<T> {
     T create(T itemToCreate);
     T update(String id, T itemToUpdate);
     T delete(String id);
+    void ping();
 }
