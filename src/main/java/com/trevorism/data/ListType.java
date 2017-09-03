@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * @author tbrooks
  */
-final class ListType<T> implements ParameterizedType {
+public final class ListType<T> implements ParameterizedType {
     private Class<?> wrapped;
 
     public ListType(Class<T> wrapped) {

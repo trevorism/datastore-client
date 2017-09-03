@@ -6,12 +6,13 @@ import com.trevorism.http.JsonHttpClient;
 
 import java.util.List;
 
+import static com.trevorism.data.PingUtils.DATASTORE_BASE_URL;
+
 /**
  * @author tbrooks
  */
 public class DatastoreRepository<T> implements Repository<T> {
 
-    static final String DATASTORE_BASE_URL = "http://datastore.trevorism.com";
     private static final long DEFAULT_TIMEOUT_MILLIS = 10000;
 
     private final Class<T> clazz;
@@ -77,20 +78,6 @@ public class DatastoreRepository<T> implements Repository<T> {
 
     @Override
     public void ping() {
-        try {
-            //ping the API to wake it up since it is not always on
-            String pong = client.get(DATASTORE_BASE_URL + "/ping");
-            if (!"pong".equals(pong))
-                throw new Exception("Unable to ping events");
-        } catch (Exception e) {
-            try {
-                Thread.sleep(pingTimeout);
-                String pong = client.get(DATASTORE_BASE_URL + "/ping");
-                if (!"pong".equals(pong))
-                    throw new RuntimeException("Unable to ping events after 10 second retry");
-            } catch (InterruptedException ie) {
-                throw new RuntimeException("Interrupted failure", ie);
-            }
-        }
+        PingUtils.ping(pingTimeout);
     }
 }
