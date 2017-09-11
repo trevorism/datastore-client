@@ -2,27 +2,29 @@ package com.trevorism.data.correlated;
 
 import com.google.gson.Gson;
 import com.trevorism.data.ListType;
-import com.trevorism.data.PingUtils;
+import com.trevorism.data.RequestUtils;
 import com.trevorism.http.headers.HeadersHttpClient;
 import com.trevorism.http.headers.HeadersJsonHttpClient;
 import com.trevorism.http.util.ResponseUtils;
+import com.trevorism.secure.PasswordProvider;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.trevorism.data.PingUtils.DATASTORE_BASE_URL;
+import static com.trevorism.data.RequestUtils.DATASTORE_BASE_URL;
 /**
  * @author tbrooks
  */
 public class CorrelatedDatastoreRepository<T> implements CorrelatedRepository<T> {
 
-    private static final long DEFAULT_TIMEOUT_MILLIS = 10000;
+    private static final long DEFAULT_TIMEOUT_MILLIS = 15000;
 
     private final Class<T> clazz;
     private final String type;
     private final Gson gson = new Gson();
     private final HeadersHttpClient client = new HeadersJsonHttpClient();
+    private final PasswordProvider passwordProvider = new PasswordProvider();
 
     private final long pingTimeout;
 
@@ -38,7 +40,7 @@ public class CorrelatedDatastoreRepository<T> implements CorrelatedRepository<T>
 
     @Override
     public List<T> list(String correlationId) {
-        Map<String, String> headersMap = getHeadersMap(correlationId);
+        Map<String, String> headersMap = RequestUtils.createHeaderMap(passwordProvider, correlationId);
 
         String url = DATASTORE_BASE_URL + "/api/" + type;
         String json = ResponseUtils.getEntity(client.get(url, headersMap));
@@ -48,7 +50,7 @@ public class CorrelatedDatastoreRepository<T> implements CorrelatedRepository<T>
 
     @Override
     public T get(String id, String correlationId) {
-        Map<String, String> headersMap = getHeadersMap(correlationId);
+        Map<String, String> headersMap = RequestUtils.createHeaderMap(passwordProvider, correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String json = ResponseUtils.getEntity(client.get(url, headersMap));
         return gson.fromJson(json, clazz);
@@ -56,7 +58,7 @@ public class CorrelatedDatastoreRepository<T> implements CorrelatedRepository<T>
 
     @Override
     public T create(T itemToCreate, String correlationId) {
-        Map<String, String> headersMap = getHeadersMap(correlationId);
+        Map<String, String> headersMap = RequestUtils.createHeaderMap(passwordProvider, correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type;
         String json = gson.toJson(itemToCreate);
         String resultJson = ResponseUtils.getEntity(client.post(url, json, headersMap));
@@ -71,7 +73,7 @@ public class CorrelatedDatastoreRepository<T> implements CorrelatedRepository<T>
      */
     @Override
     public T update(String id, T itemToUpdate, String correlationId) {
-        Map<String, String> headersMap = getHeadersMap(correlationId);
+        Map<String, String> headersMap = RequestUtils.createHeaderMap(passwordProvider, correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String json = gson.toJson(itemToUpdate);
         String resultJson = ResponseUtils.getEntity(client.put(url, json, headersMap));
@@ -80,7 +82,7 @@ public class CorrelatedDatastoreRepository<T> implements CorrelatedRepository<T>
 
     @Override
     public T delete(String id, String correlationId) {
-        Map<String, String> headersMap = getHeadersMap(correlationId);
+        Map<String, String> headersMap = RequestUtils.createHeaderMap(passwordProvider, correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String json = ResponseUtils.getEntity(client.get(url, headersMap));
         return gson.fromJson(json, clazz);
@@ -88,12 +90,7 @@ public class CorrelatedDatastoreRepository<T> implements CorrelatedRepository<T>
 
     @Override
     public void ping() {
-        PingUtils.ping(pingTimeout);
+        RequestUtils.ping(pingTimeout);
     }
 
-    private Map<String, String> getHeadersMap(String correlationId) {
-        Map<String, String> headersMap = new HashMap<>();
-        headersMap.put(HeadersHttpClient.CORRELATION_ID_HEADER_KEY, correlationId);
-        return headersMap;
-    }
 }

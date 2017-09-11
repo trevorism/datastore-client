@@ -3,10 +3,15 @@ package com.trevorism.data;
 import com.google.gson.Gson;
 import com.trevorism.http.HttpClient;
 import com.trevorism.http.JsonHttpClient;
+import com.trevorism.http.headers.HeadersHttpClient;
+import com.trevorism.http.headers.HeadersJsonHttpClient;
+import com.trevorism.http.util.ResponseUtils;
+import com.trevorism.secure.PasswordProvider;
+import org.apache.http.client.methods.CloseableHttpResponse;
 
 import java.util.List;
 
-import static com.trevorism.data.PingUtils.DATASTORE_BASE_URL;
+import static com.trevorism.data.RequestUtils.DATASTORE_BASE_URL;
 
 /**
  * @author tbrooks
@@ -18,7 +23,8 @@ public class DatastoreRepository<T> implements Repository<T> {
     private final Class<T> clazz;
     private final String type;
     private final Gson gson = new Gson();
-    private final HttpClient client = new JsonHttpClient();
+    private final HeadersHttpClient headersClient = new HeadersJsonHttpClient();
+    private final PasswordProvider passwordProvider = new PasswordProvider();
 
     private final long pingTimeout;
 
@@ -35,7 +41,8 @@ public class DatastoreRepository<T> implements Repository<T> {
     @Override
     public List<T> list() {
         String url = DATASTORE_BASE_URL + "/api/" + type;
-        String json = client.get(url);
+        CloseableHttpResponse response = headersClient.get(url, RequestUtils.createHeaderMap(passwordProvider, null));
+        String json =  ResponseUtils.getEntity(response);
         return gson.fromJson(json, new ListType<>(clazz));
 
     }
@@ -43,7 +50,8 @@ public class DatastoreRepository<T> implements Repository<T> {
     @Override
     public T get(String id) {
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
-        String json = client.get(url);
+        CloseableHttpResponse response = headersClient.get(url, RequestUtils.createHeaderMap(passwordProvider, null));
+        String json =  ResponseUtils.getEntity(response);
         return gson.fromJson(json, clazz);
     }
 
@@ -51,7 +59,8 @@ public class DatastoreRepository<T> implements Repository<T> {
     public T create(T itemToCreate) {
         String url = DATASTORE_BASE_URL + "/api/" + type;
         String json = gson.toJson(itemToCreate);
-        String resultJson = client.post(url, json);
+        CloseableHttpResponse response = headersClient.post(url, json, RequestUtils.createHeaderMap(passwordProvider, null));
+        String resultJson =  ResponseUtils.getEntity(response);
         return gson.fromJson(resultJson, clazz);
     }
 
@@ -65,19 +74,21 @@ public class DatastoreRepository<T> implements Repository<T> {
     public T update(String id, T itemToUpdate) {
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String json = gson.toJson(itemToUpdate);
-        String resultJson = client.put(url, json);
+        CloseableHttpResponse response = headersClient.put(url, json, RequestUtils.createHeaderMap(passwordProvider, null));
+        String resultJson =  ResponseUtils.getEntity(response);
         return gson.fromJson(resultJson, clazz);
     }
 
     @Override
     public T delete(String id) {
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
-        String json = client.delete(url);
+        CloseableHttpResponse response = headersClient.delete(url, RequestUtils.createHeaderMap(passwordProvider, null));
+        String json =  ResponseUtils.getEntity(response);
         return gson.fromJson(json, clazz);
     }
 
     @Override
     public void ping() {
-        PingUtils.ping(pingTimeout);
+        RequestUtils.ping(pingTimeout);
     }
 }
