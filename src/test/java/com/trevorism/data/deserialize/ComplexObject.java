@@ -101,5 +101,5 @@ public class ComplexObject {
     public void setObjects(List<SimpleObject> objects) {
         this.objects = objects;
     }
-    
+
 }

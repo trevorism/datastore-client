@@ -1,7 +1,6 @@
 package com.trevorism.data.deserialize;
 
 import com.google.gson.*;
-import com.trevorism.data.ListType;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import java.beans.PropertyDescriptor;
@@ -13,7 +12,7 @@ import java.util.*;
 /**
  * @author tbrooks
  */
-public class DatastoreDeserializer<T> {
+public class DatastoreDeserializer<T> implements Deserializer<T>{
 
     private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
 

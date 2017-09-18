@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class DatastoreRepositoryTest {
 
-    Repository<TestEntity> repository = new DatastoreRepository<>(TestEntity.class);
+    Repository<TestEntity> repository = new FastDatastoreRepository<>(TestEntity.class);
 
     @Before
     public void setup(){

@@ -1,4 +1,4 @@
-package com.trevorism.data;
+package com.trevorism.data.deserialize;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;

@@ -1,8 +1,9 @@
-package com.trevorism.data.correlated;
+package com.trevorism.data;
 
 import com.google.gson.Gson;
-import com.trevorism.data.ListType;
-import com.trevorism.data.RequestUtils;
+import com.google.gson.GsonBuilder;
+import com.trevorism.data.deserialize.DatastoreDeserializer;
+import com.trevorism.data.deserialize.Deserializer;
 import com.trevorism.http.headers.HeadersHttpClient;
 import com.trevorism.http.headers.HeadersJsonHttpClient;
 import com.trevorism.http.util.ResponseUtils;
@@ -12,47 +13,65 @@ import java.util.List;
 import java.util.Map;
 
 import static com.trevorism.data.RequestUtils.DATASTORE_BASE_URL;
+
 /**
  * @author tbrooks
  */
-public class CorrelatedDatastoreRepository<T> implements CorrelatedRepository<T> {
+public class FastDatastoreRepository<T> implements Repository<T> {
 
-    private static final long DEFAULT_TIMEOUT_MILLIS = 15000;
 
     private final Class<T> clazz;
     private final String type;
-    private final Gson gson = new Gson();
-    private final HeadersHttpClient client = new HeadersJsonHttpClient();
-    private final PasswordProvider passwordProvider = new PasswordProvider();
+    private final Gson gson;
+    private final Deserializer<T> deserializer;
+    private final HeadersHttpClient client;
+    private final PasswordProvider passwordProvider;
 
     private final long pingTimeout;
 
-    public CorrelatedDatastoreRepository(Class<T> clazz) {
+    public FastDatastoreRepository(Class<T> clazz) {
         this(clazz, DEFAULT_TIMEOUT_MILLIS);
     }
 
-    public CorrelatedDatastoreRepository(Class<T> clazz, long pingTimeout) {
+    public FastDatastoreRepository(Class<T> clazz, long pingTimeout) {
         this.clazz = clazz;
         this.type = clazz.getSimpleName().toLowerCase();
         this.pingTimeout = pingTimeout;
+        this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
+        this.deserializer = new DatastoreDeserializer<>();
+        this.client = new HeadersJsonHttpClient();
+        this.passwordProvider = new PasswordProvider();
+    }
+
+    @Override
+    public List<T> list() {
+        return list(null);
     }
 
     @Override
     public List<T> list(String correlationId) {
         Map<String, String> headersMap = RequestUtils.createHeaderMap(passwordProvider, correlationId);
-
         String url =  DATASTORE_BASE_URL + "/api/" + type;
         String json = ResponseUtils.getEntity(client.get(url, headersMap));
-        return gson.fromJson(json, new ListType<>(clazz));
+        return deserializer.deserializeJsonArray(json, clazz);
+    }
 
+    @Override
+    public T get(String id) {
+        return get(id, null);
     }
 
     @Override
     public T get(String id, String correlationId) {
         Map<String, String> headersMap = RequestUtils.createHeaderMap(passwordProvider, correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
-        String json = ResponseUtils.getEntity(client.get(url, headersMap));
-        return gson.fromJson(json, clazz);
+        String resultJson = ResponseUtils.getEntity(client.get(url, headersMap));
+        return deserializer.deserializeJsonObject(resultJson, clazz);
+    }
+
+    @Override
+    public T create(T itemToCreate) {
+        return create(itemToCreate, null);
     }
 
     @Override
@@ -61,7 +80,12 @@ public class CorrelatedDatastoreRepository<T> implements CorrelatedRepository<T>
         String url = DATASTORE_BASE_URL + "/api/" + type;
         String json = gson.toJson(itemToCreate);
         String resultJson = ResponseUtils.getEntity(client.post(url, json, headersMap));
-        return gson.fromJson(resultJson, clazz);
+        return deserializer.deserializeJsonObject(resultJson, clazz);
+    }
+
+    @Override
+    public T update(String id, T itemToUpdate) {
+        return update(id, itemToUpdate, null);
     }
 
     /**
@@ -76,20 +100,24 @@ public class CorrelatedDatastoreRepository<T> implements CorrelatedRepository<T>
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String json = gson.toJson(itemToUpdate);
         String resultJson = ResponseUtils.getEntity(client.put(url, json, headersMap));
-        return gson.fromJson(resultJson, clazz);
+        return deserializer.deserializeJsonObject(resultJson, clazz);
+    }
+
+    @Override
+    public T delete(String id) {
+        return delete(id, null);
     }
 
     @Override
     public T delete(String id, String correlationId) {
         Map<String, String> headersMap = RequestUtils.createHeaderMap(passwordProvider, correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
-        String json = ResponseUtils.getEntity(client.get(url, headersMap));
-        return gson.fromJson(json, clazz);
+        String resultJson = ResponseUtils.getEntity(client.get(url, headersMap));
+        return deserializer.deserializeJsonObject(resultJson, clazz);
     }
 
     @Override
     public void ping() {
         RequestUtils.ping(pingTimeout);
     }
-
 }
