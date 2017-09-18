@@ -8,7 +8,6 @@ import com.trevorism.http.headers.HeadersJsonHttpClient;
 import com.trevorism.http.util.ResponseUtils;
 import com.trevorism.secure.PasswordProvider;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,7 +41,7 @@ public class CorrelatedDatastoreRepository<T> implements CorrelatedRepository<T>
     public List<T> list(String correlationId) {
         Map<String, String> headersMap = RequestUtils.createHeaderMap(passwordProvider, correlationId);
 
-        String url = DATASTORE_BASE_URL + "/api/" + type;
+        String url =  DATASTORE_BASE_URL + "/api/" + type;
         String json = ResponseUtils.getEntity(client.get(url, headersMap));
         return gson.fromJson(json, new ListType<>(clazz));
 

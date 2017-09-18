@@ -1,8 +1,7 @@
 package com.trevorism.data;
 
 import com.google.gson.Gson;
-import com.trevorism.http.HttpClient;
-import com.trevorism.http.JsonHttpClient;
+import com.google.gson.GsonBuilder;
 import com.trevorism.http.headers.HeadersHttpClient;
 import com.trevorism.http.headers.HeadersJsonHttpClient;
 import com.trevorism.http.util.ResponseUtils;
@@ -22,7 +21,7 @@ public class DatastoreRepository<T> implements Repository<T> {
 
     private final Class<T> clazz;
     private final String type;
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
     private final HeadersHttpClient headersClient = new HeadersJsonHttpClient();
     private final PasswordProvider passwordProvider = new PasswordProvider();
 
