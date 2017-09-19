@@ -16,22 +16,33 @@ public class DatastoreDeserializerTest {
     private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
 
     @Test
-    public void deserializeComplex() throws Exception {
+    public void deserializeEmptyArray(){
+        String json = "[{}]";
+        DatastoreDeserializer<ComplexObject> deserializer = new DatastoreDeserializer<>();
+        List<ComplexObject> deserializedList = deserializer.deserializeJsonArray(json, ComplexObject.class);
+
+        Assert.assertEquals(1, deserializedList.size());
+        Assert.assertNotNull(deserializedList.get(0));
+        Assert.assertNull(deserializedList.get(0).getId());
+        Assert.assertNull(deserializedList.get(0).getDate());
+        Assert.assertNull(deserializedList.get(0).getObjects());
+
+    }
+
+    @Test
+    public void deserializeComplex(){
         ComplexObject complexObject = ComplexObject.createSample();
         String json = gson.toJson(complexObject);
-
-        System.out.println(json);
 
         DatastoreDeserializer<ComplexObject> deserializer = new DatastoreDeserializer<>();
         ComplexObject deserialized = deserializer.deserializeJsonObject(json, ComplexObject.class);
 
-        System.out.println(deserialized);
         Assert.assertEquals(json, deserialized.toString());
 
     }
 
     @Test
-    public void deserializeSimple1() throws Exception {
+    public void deserializeSimple1() {
         SimpleObject simpleObject = SimpleObject.createSample1();
         String json = gson.toJson(simpleObject);
 
@@ -42,7 +53,7 @@ public class DatastoreDeserializerTest {
     }
 
     @Test
-    public void deserializeSimpleList() throws Exception {
+    public void deserializeSimpleList() {
         List<SimpleObject> list = Arrays.asList(SimpleObject.createSample1(), SimpleObject.createSample2());
         String json = gson.toJson(list);
 

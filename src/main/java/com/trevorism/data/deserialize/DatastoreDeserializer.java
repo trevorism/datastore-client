@@ -38,18 +38,21 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
 
     private T deserialize(JsonObject json, Class<T> clazz){
         try {
-            T t = clazz.newInstance();
-
-            for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
-                PropertyDescriptor descriptor = findPropertyDescriptor(t, entry);
-                if (descriptor != null) {
-                    Object value = getValue(entry.getValue(), descriptor);
-                    PropertyUtils.setProperty(t, descriptor.getName(), value);
-                }
-            }
-            return t;
+            T newInstance = clazz.newInstance();
+            setPropertiesOnNewInstance(json, newInstance);
+            return newInstance;
         }catch (Exception e){
             throw new RuntimeException("Unable to deserialize " + json + " into " + clazz, e);
+        }
+    }
+
+    private void setPropertiesOnNewInstance(JsonObject json, T newInstance) throws Exception {
+        for (Map.Entry<String, JsonElement> entry : json.entrySet()) {
+            PropertyDescriptor descriptor = findPropertyDescriptor(newInstance, entry);
+            if (descriptor != null) {
+                Object value = getValue(entry.getValue(), descriptor);
+                PropertyUtils.setProperty(newInstance, descriptor.getName(), value);
+            }
         }
     }
 

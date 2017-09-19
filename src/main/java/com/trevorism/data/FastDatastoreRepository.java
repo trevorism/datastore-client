@@ -26,7 +26,6 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     private final Deserializer<T> deserializer;
     private final HeadersHttpClient client;
     private final PasswordProvider passwordProvider;
-
     private final long pingTimeout;
 
     public FastDatastoreRepository(Class<T> clazz) {
