@@ -1,11 +1,7 @@
 package com.trevorism.data;
 
-import com.google.gson.GsonBuilder;
-import com.trevorism.data.deserialize.DatastoreDeserializer;
-import com.trevorism.http.headers.HeadersJsonHttpClient;
-import com.trevorism.secure.PasswordProvider;
-
 import java.util.List;
+
 /**
  * @author tbrooks
  */
