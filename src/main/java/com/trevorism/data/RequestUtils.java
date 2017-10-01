@@ -5,37 +5,40 @@ import com.trevorism.http.JsonHttpClient;
 import com.trevorism.http.headers.HeadersHttpClient;
 import com.trevorism.secure.PasswordProvider;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author tbrooks
  */
-public class RequestUtils {
+final class RequestUtils {
 
-    public static final String DATASTORE_BASE_URL = "http://datastore.trevorism.com";
+    static final String DATASTORE_BASE_URL = "http://datastore.trevorism.com";
     private static final HttpClient client = new JsonHttpClient();
+    private static final List<Long> retryWaits = Arrays.asList(1000L, 5000L, 10000L, 15000L);
 
+    private RequestUtils(){}
 
-    public static void ping(long timeout) {
-        try {
-            //ping the API to wake it up since it is not always on
-            String pong = client.get(DATASTORE_BASE_URL + "/ping");
-            if (!"pong".equals(pong))
-                throw new Exception("Unable to ping events");
-        } catch (Exception e) {
+    static void ping() {
+        for(Long retryWait : retryWaits){
             try {
-                Thread.sleep(timeout);
+                //ping the API to wake it up since it is not always on
                 String pong = client.get(DATASTORE_BASE_URL + "/ping");
                 if (!"pong".equals(pong))
-                    throw new RuntimeException("Unable to ping events after 10 second retry");
-            } catch (InterruptedException ie) {
-                throw new RuntimeException("Interrupted failure", ie);
+                    throw new Exception("Unable to ping datastore");
+            } catch (Exception e) {
+                try {
+                    Thread.sleep(retryWait);
+                } catch (InterruptedException ie) {
+                    throw new RuntimeException("Interrupted failure", ie);
+                }
             }
         }
     }
 
-    public static Map<String, String> createHeaderMap(PasswordProvider passwordProvider, String correlationId) {
+    static Map<String, String> createHeaderMap(PasswordProvider passwordProvider, String correlationId) {
         Map<String, String> headersMap = new HashMap<>();
         if(correlationId != null)
             headersMap.put(HeadersHttpClient.CORRELATION_ID_HEADER_KEY, correlationId);

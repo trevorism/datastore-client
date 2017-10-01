@@ -79,7 +79,11 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         String url = DATASTORE_BASE_URL + "/api/" + type;
         String json = gson.toJson(itemToCreate);
         String resultJson = ResponseUtils.getEntity(client.post(url, json, headersMap));
-        return deserializer.deserializeJsonObject(resultJson, clazz);
+        try {
+            return deserializer.deserializeJsonObject(resultJson, clazz);
+        }catch (Exception e){
+            throw new RuntimeException("Unable to create object. The most likely cause is an object with a duplicate or non-numeric id", e);
+        }
     }
 
     @Override
@@ -117,6 +121,6 @@ public class FastDatastoreRepository<T> implements Repository<T> {
 
     @Override
     public void ping() {
-        RequestUtils.ping(pingTimeout);
+        RequestUtils.ping();
     }
 }

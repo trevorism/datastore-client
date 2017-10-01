@@ -15,15 +15,13 @@ import java.util.*;
 public class DatastoreDeserializer<T> implements Deserializer<T>{
 
     private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
-
+    private final JsonParser parser = new JsonParser();
 
     public T deserializeJsonObject(String jsonObject, Class<T> clazz){
-        JsonParser parser = new JsonParser();
         return deserialize(parser.parse(jsonObject).getAsJsonObject(), clazz);
     }
 
     public List<T> deserializeJsonArray(String jsonArray, Class<T> clazz){
-        JsonParser parser = new JsonParser();
         return deserialize(parser.parse(jsonArray).getAsJsonArray(), clazz);
     }
 
@@ -89,13 +87,20 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
         } else if (type.isAssignableFrom(List.class)) {
             return handleListType(value, descriptor);
         } else if (type.isAssignableFrom(Map.class)) {
-            return gson.fromJson(value, Map.class);
+            return handleMapType(value);
         }
 
         return value.getAsString();
     }
 
+    private Object handleMapType(JsonElement value) {
+        value = removeQuotes(value);
+        return gson.fromJson(value, Map.class);
+    }
+
     private Object handleListType(JsonElement value, PropertyDescriptor descriptor) {
+        value = removeQuotes(value);
+
         final Type gt = descriptor.getReadMethod().getGenericReturnType();
         if (gt instanceof ParameterizedType) {
             Type actualType = ((ParameterizedType) gt).getActualTypeArguments()[0];
@@ -104,5 +109,12 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
         }
 
         return gson.fromJson(value, List.class);
+    }
+
+    private JsonElement removeQuotes(JsonElement value) {
+        if(value.toString().startsWith("\"")){
+            return parser.parse(value.getAsString());
+        }
+        return value;
     }
 }

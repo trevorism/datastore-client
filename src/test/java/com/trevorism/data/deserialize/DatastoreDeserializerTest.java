@@ -65,4 +65,26 @@ public class DatastoreDeserializerTest {
 
     }
 
+    @Test
+    public void deserializeStringIntoMap(){
+        String json = "{\"keyValue\":\"{\\\"key\\\": \\\"value\\\"}\"}";
+
+        DatastoreDeserializer<MapAndListAsString> deserializer = new DatastoreDeserializer<>();
+        MapAndListAsString obj = deserializer.deserializeJsonObject(json, MapAndListAsString.class);
+
+        Assert.assertEquals("value", obj.getKeyValue().get("key"));
+
+    }
+
+    @Test
+    public void deserializeStringIntoList(){
+        String json = "{\"items\":\"[\\\"item1\\\", \\\"item2\\\"]\"}";
+        DatastoreDeserializer<MapAndListAsString> deserializer = new DatastoreDeserializer<>();
+        MapAndListAsString obj = deserializer.deserializeJsonObject(json, MapAndListAsString.class);
+
+        Assert.assertEquals(2, obj.getItems().size());
+        Assert.assertEquals("item1", obj.getItems().get(0));
+        Assert.assertEquals("item2", obj.getItems().get(1));
+
+    }
 }
