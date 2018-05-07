@@ -17,10 +17,12 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
     private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
     private final JsonParser parser = new JsonParser();
 
+    @Override
     public T deserializeJsonObject(String jsonObject, Class<T> clazz){
         return deserialize(parser.parse(jsonObject).getAsJsonObject(), clazz);
     }
 
+    @Override
     public List<T> deserializeJsonArray(String jsonArray, Class<T> clazz){
         return deserialize(parser.parse(jsonArray).getAsJsonArray(), clazz);
     }
@@ -68,7 +70,7 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
 
     }
 
-    private Object getValue(JsonElement value, PropertyDescriptor descriptor) throws Exception {
+    private Object getValue(JsonElement value, PropertyDescriptor descriptor) {
         Class<?> type = descriptor.getPropertyType();
         if (type.equals(int.class) || type.isAssignableFrom(Integer.class)) {
             return value.getAsInt();
@@ -98,6 +100,7 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
         return gson.fromJson(value, Map.class);
     }
 
+    @SuppressWarnings("unchecked")
     private Object handleListType(JsonElement value, PropertyDescriptor descriptor) {
         value = removeQuotes(value);
 
