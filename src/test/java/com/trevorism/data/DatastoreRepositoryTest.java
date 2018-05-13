@@ -1,5 +1,6 @@
 package com.trevorism.data;
 
+import com.trevorism.data.exception.IdMissingException;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,6 +61,26 @@ public class DatastoreRepositoryTest {
 
     }
 
+    @Test(expected = IdMissingException.class)
+    public void getMissingId()  {
+        TestEntity event = repository.get("111111");
+        Assert.assertNull(event);
+    }
+
+    @Test(expected = IdMissingException.class)
+    public void updateMissingId()  {
+        TestEntity event = new TestEntity();
+        event.setApplication("realApp");
+
+        TestEntity event2 = repository.update("111111", event);
+        Assert.assertNull(event2);
+    }
+
+    @Test(expected = IdMissingException.class)
+    public void deleteMissingId()  {
+        TestEntity event = repository.delete("111111");
+        Assert.assertNull(event);
+    }
 
     private TestEntity createSampleEvent() {
         TestEntity event = new TestEntity();

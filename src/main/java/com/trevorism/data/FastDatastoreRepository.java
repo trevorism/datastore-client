@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.trevorism.data.deserialize.DatastoreDeserializer;
 import com.trevorism.data.deserialize.Deserializer;
+import com.trevorism.data.exception.CreationFailedException;
+import com.trevorism.data.exception.IdMissingException;
 import com.trevorism.http.headers.HeadersHttpClient;
 import com.trevorism.http.headers.HeadersJsonHttpClient;
 import com.trevorism.http.util.ResponseUtils;
@@ -65,6 +67,9 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         Map<String, String> headersMap = RequestUtils.createHeaderMap(passwordProvider, correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String resultJson = ResponseUtils.getEntity(client.get(url, headersMap));
+        if(resultJson.startsWith("<html>"))
+            throw new IdMissingException(id, correlationId);
+
         return deserializer.deserializeJsonObject(resultJson, clazz);
     }
 
@@ -82,7 +87,7 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         try {
             return deserializer.deserializeJsonObject(resultJson, clazz);
         }catch (Exception e){
-            throw new RuntimeException("Unable to create object. The most likely cause is an object with a duplicate or non-numeric id", e);
+            throw new CreationFailedException(e);
         }
     }
 
@@ -103,6 +108,8 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String json = gson.toJson(itemToUpdate);
         String resultJson = ResponseUtils.getEntity(client.put(url, json, headersMap));
+        if(resultJson.startsWith("<html>"))
+            throw new IdMissingException(id, correlationId);
         return deserializer.deserializeJsonObject(resultJson, clazz);
     }
 
@@ -115,7 +122,9 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     public T delete(String id, String correlationId) {
         Map<String, String> headersMap = RequestUtils.createHeaderMap(passwordProvider, correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
-        String resultJson = ResponseUtils.getEntity(client.get(url, headersMap));
+        String resultJson = ResponseUtils.getEntity(client.delete(url, headersMap));
+        if(resultJson.startsWith("<html>"))
+            throw new IdMissingException(id, correlationId);
         return deserializer.deserializeJsonObject(resultJson, clazz);
     }
 
