@@ -10,11 +10,7 @@ public class PingingDatastoreRepository<T> implements Repository<T> {
     private final FastDatastoreRepository<T> delegate;
 
     public PingingDatastoreRepository(Class<T> clazz) {
-        this(clazz, DEFAULT_TIMEOUT_MILLIS);
-    }
-
-    public PingingDatastoreRepository(Class<T> clazz, long pingTimeout) {
-        delegate = new FastDatastoreRepository<T>(clazz, pingTimeout);
+        delegate = new FastDatastoreRepository<T>(clazz);
     }
 
     @Override

@@ -7,8 +7,6 @@ import java.util.List;
  */
 public interface Repository<T> {
 
-    long DEFAULT_TIMEOUT_MILLIS = 15000;
-
     List<T> list();
     List<T> list(String correlationId);
 
