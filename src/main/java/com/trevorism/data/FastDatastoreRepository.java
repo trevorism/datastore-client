@@ -6,9 +6,9 @@ import com.trevorism.data.deserialize.DatastoreDeserializer;
 import com.trevorism.data.deserialize.Deserializer;
 import com.trevorism.data.exception.CreationFailedException;
 import com.trevorism.data.exception.IdMissingException;
-import com.trevorism.http.headers.HeadersHttpClient;
-import com.trevorism.http.headers.HeadersJsonHttpClient;
-import com.trevorism.http.util.ResponseUtils;
+import com.trevorism.https.DefaultSecureHttpClient;
+import com.trevorism.https.SecureHttpClient;
+
 
 import java.util.List;
 import java.util.Map;
@@ -24,14 +24,14 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     private final String type;
     private final Gson gson;
     private final Deserializer<T> deserializer;
-    private final HeadersHttpClient client;
+    private final SecureHttpClient client;
 
     public FastDatastoreRepository(Class<T> clazz) {
         this.clazz = clazz;
         this.type = clazz.getSimpleName().toLowerCase();
         this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
         this.deserializer = new DatastoreDeserializer<>();
-        this.client = new HeadersJsonHttpClient();
+        this.client = new DefaultSecureHttpClient();
     }
 
     @Override
@@ -41,9 +41,8 @@ public class FastDatastoreRepository<T> implements Repository<T> {
 
     @Override
     public List<T> list(String correlationId) {
-        Map<String, String> headersMap = RequestUtils.createHeaderMap(correlationId);
         String url =  DATASTORE_BASE_URL + "/api/" + type;
-        String json = ResponseUtils.getEntity(client.get(url, headersMap));
+        String json = client.get(url, correlationId);
         return deserializer.deserializeJsonArray(json, clazz);
     }
 
@@ -56,7 +55,7 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     public T get(String id, String correlationId) {
         Map<String, String> headersMap = RequestUtils.createHeaderMap(correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
-        String resultJson = ResponseUtils.getEntity(client.get(url, headersMap));
+        String resultJson = client.get(url, correlationId);
         if(resultJson.startsWith("<html>"))
             throw new IdMissingException(id, correlationId);
 
@@ -73,7 +72,7 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         Map<String, String> headersMap = RequestUtils.createHeaderMap(correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type;
         String json = gson.toJson(itemToCreate);
-        String resultJson = ResponseUtils.getEntity(client.post(url, json, headersMap));
+        String resultJson = client.post(url, json, correlationId);
         try {
             return deserializer.deserializeJsonObject(resultJson, clazz);
         }catch (Exception e){
@@ -97,7 +96,7 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         Map<String, String> headersMap = RequestUtils.createHeaderMap(correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String json = gson.toJson(itemToUpdate);
-        String resultJson = ResponseUtils.getEntity(client.put(url, json, headersMap));
+        String resultJson = client.put(url, json, correlationId);
         if(resultJson.startsWith("<html>"))
             throw new IdMissingException(id, correlationId);
         return deserializer.deserializeJsonObject(resultJson, clazz);
@@ -112,7 +111,7 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     public T delete(String id, String correlationId) {
         Map<String, String> headersMap = RequestUtils.createHeaderMap(correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
-        String resultJson = ResponseUtils.getEntity(client.delete(url, headersMap));
+        String resultJson = client.delete(url, correlationId);
         if(resultJson.startsWith("<html>"))
             throw new IdMissingException(id, correlationId);
         return deserializer.deserializeJsonObject(resultJson, clazz);

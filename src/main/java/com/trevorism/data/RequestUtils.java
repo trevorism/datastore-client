@@ -15,7 +15,7 @@ import java.util.Map;
  */
 final class RequestUtils {
 
-    static final String DATASTORE_BASE_URL = "http://datastore.trevorism.com";
+    static final String DATASTORE_BASE_URL = "https://datastore.trevorism.com";
     private static final HttpClient client = new JsonHttpClient();
     private static final List<Long> retryWaits = Arrays.asList(1000L, 5000L, 10000L, 15000L);
 

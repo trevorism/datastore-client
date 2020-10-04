@@ -24,10 +24,7 @@ repositories {
     }
 }
 dependencies {
-    implementation 'com.trevorism:http-utils:1.0.2'
-    implementation 'com.trevorism:secure-utils:3.0.0'
-
-    implementation 'org.apache.httpcomponents:httpclient:4.5.12'
+    implementation 'com.trevorism:secure-http-utils:0.1.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'commons-beanutils:commons-beanutils:1.9.4'
 
