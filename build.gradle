@@ -29,7 +29,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'commons-beanutils:commons-beanutils:1.9.4'
 
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.1'
 }
 
 check.dependsOn "jacocoTestReport"
