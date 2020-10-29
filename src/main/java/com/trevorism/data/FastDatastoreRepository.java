@@ -8,10 +8,8 @@ import com.trevorism.data.exception.CreationFailedException;
 import com.trevorism.data.exception.IdMissingException;
 import com.trevorism.https.DefaultSecureHttpClient;
 import com.trevorism.https.SecureHttpClient;
-import com.trevorism.https.token.ObtainTokenStrategy;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.trevorism.data.RequestUtils.DATASTORE_BASE_URL;
 
@@ -34,16 +32,12 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         this.client = new DefaultSecureHttpClient();
     }
 
-    public FastDatastoreRepository(Class<T> clazz, ObtainTokenStrategy obtainTokenStrategy) {
+    public FastDatastoreRepository(Class<T> clazz, SecureHttpClient secureHttpClient) {
         this.clazz = clazz;
         this.type = clazz.getSimpleName().toLowerCase();
         this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
         this.deserializer = new DatastoreDeserializer<>();
-        if (obtainTokenStrategy != null) {
-            this.client = new DefaultSecureHttpClient(obtainTokenStrategy);
-        } else {
-            this.client = new DefaultSecureHttpClient();
-        }
+        this.client = secureHttpClient;
     }
 
     @Override

@@ -7,7 +7,7 @@
 
 Client Library for trevorism datastore.
 
-Current Version: 2.2.0
+Current Version: 2.3.0
 
 Supports classes with primitive types, Dates, Lists and Maps. Classes should have a `String` or `long` 'id' property
 
