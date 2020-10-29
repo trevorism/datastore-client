@@ -8,7 +8,7 @@ import com.trevorism.data.exception.CreationFailedException;
 import com.trevorism.data.exception.IdMissingException;
 import com.trevorism.https.DefaultSecureHttpClient;
 import com.trevorism.https.SecureHttpClient;
-
+import com.trevorism.https.token.ObtainTokenStrategy;
 
 import java.util.List;
 import java.util.Map;
@@ -34,6 +34,18 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         this.client = new DefaultSecureHttpClient();
     }
 
+    public FastDatastoreRepository(Class<T> clazz, ObtainTokenStrategy obtainTokenStrategy) {
+        this.clazz = clazz;
+        this.type = clazz.getSimpleName().toLowerCase();
+        this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
+        this.deserializer = new DatastoreDeserializer<>();
+        if (obtainTokenStrategy != null) {
+            this.client = new DefaultSecureHttpClient(obtainTokenStrategy);
+        } else {
+            this.client = new DefaultSecureHttpClient();
+        }
+    }
+
     @Override
     public List<T> list() {
         return list(null);
@@ -41,7 +53,7 @@ public class FastDatastoreRepository<T> implements Repository<T> {
 
     @Override
     public List<T> list(String correlationId) {
-        String url =  DATASTORE_BASE_URL + "/api/" + type;
+        String url = DATASTORE_BASE_URL + "/api/" + type;
         String json = client.get(url, correlationId);
         return deserializer.deserializeJsonArray(json, clazz);
     }
@@ -53,10 +65,9 @@ public class FastDatastoreRepository<T> implements Repository<T> {
 
     @Override
     public T get(String id, String correlationId) {
-        Map<String, String> headersMap = RequestUtils.createHeaderMap(correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String resultJson = client.get(url, correlationId);
-        if(resultJson.startsWith("<html>"))
+        if (resultJson.startsWith("<html>"))
             throw new IdMissingException(id, correlationId);
 
         return deserializer.deserializeJsonObject(resultJson, clazz);
@@ -69,13 +80,12 @@ public class FastDatastoreRepository<T> implements Repository<T> {
 
     @Override
     public T create(T itemToCreate, String correlationId) {
-        Map<String, String> headersMap = RequestUtils.createHeaderMap(correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type;
         String json = gson.toJson(itemToCreate);
         String resultJson = client.post(url, json, correlationId);
         try {
             return deserializer.deserializeJsonObject(resultJson, clazz);
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new CreationFailedException(e);
         }
     }
@@ -87,17 +97,17 @@ public class FastDatastoreRepository<T> implements Repository<T> {
 
     /**
      * Update will ignore nulls and changes to the id
-     * @param id The id of the object being updated.
+     *
+     * @param id           The id of the object being updated.
      * @param itemToUpdate The new object.
      * @return The updated object
      */
     @Override
     public T update(String id, T itemToUpdate, String correlationId) {
-        Map<String, String> headersMap = RequestUtils.createHeaderMap(correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String json = gson.toJson(itemToUpdate);
         String resultJson = client.put(url, json, correlationId);
-        if(resultJson.startsWith("<html>"))
+        if (resultJson.startsWith("<html>"))
             throw new IdMissingException(id, correlationId);
         return deserializer.deserializeJsonObject(resultJson, clazz);
     }
@@ -109,10 +119,9 @@ public class FastDatastoreRepository<T> implements Repository<T> {
 
     @Override
     public T delete(String id, String correlationId) {
-        Map<String, String> headersMap = RequestUtils.createHeaderMap(correlationId);
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String resultJson = client.delete(url, correlationId);
-        if(resultJson.startsWith("<html>"))
+        if (resultJson.startsWith("<html>"))
             throw new IdMissingException(id, correlationId);
         return deserializer.deserializeJsonObject(resultJson, clazz);
     }

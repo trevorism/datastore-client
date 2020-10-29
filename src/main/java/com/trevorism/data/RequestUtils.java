@@ -37,13 +37,4 @@ final class RequestUtils {
             }
         }
     }
-
-    static Map<String, String> createHeaderMap(String correlationId) {
-        Map<String, String> headersMap = new HashMap<>();
-        if(correlationId != null)
-            headersMap.put(HeadersHttpClient.CORRELATION_ID_HEADER_KEY, correlationId);
-        headersMap.put("Authorization", PasswordProvider.getInstance().getPassword());
-        return headersMap;
-    }
-
 }

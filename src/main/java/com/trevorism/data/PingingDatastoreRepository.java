@@ -1,5 +1,8 @@
 package com.trevorism.data;
 
+import com.trevorism.https.token.ObtainTokenFromAuthService;
+import com.trevorism.https.token.ObtainTokenStrategy;
+
 import java.util.List;
 
 /**
@@ -10,7 +13,11 @@ public class PingingDatastoreRepository<T> implements Repository<T> {
     private final FastDatastoreRepository<T> delegate;
 
     public PingingDatastoreRepository(Class<T> clazz) {
-        delegate = new FastDatastoreRepository<T>(clazz);
+        this(clazz, null);
+    }
+
+    public PingingDatastoreRepository(Class<T> clazz, ObtainTokenStrategy obtainTokenStrategy) {
+        delegate = new FastDatastoreRepository<T>(clazz, obtainTokenStrategy);
     }
 
     @Override
