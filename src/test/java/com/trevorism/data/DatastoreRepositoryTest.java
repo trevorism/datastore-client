@@ -1,6 +1,15 @@
 package com.trevorism.data;
 
 import com.trevorism.data.exception.IdMissingException;
+import com.trevorism.data.model.filtering.ComplexFilter;
+import com.trevorism.data.model.filtering.FilterBuilder;
+import com.trevorism.data.model.filtering.FilterConstants;
+import com.trevorism.data.model.filtering.SimpleFilter;
+import com.trevorism.data.model.paging.Limit;
+import com.trevorism.data.model.paging.Page;
+import com.trevorism.data.model.sorting.ComplexSort;
+import com.trevorism.data.model.sorting.Sort;
+import com.trevorism.data.model.sorting.SortBuilder;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -57,7 +66,7 @@ public class DatastoreRepositoryTest {
         TestEntity updatedEntity = repository.update("123456", event);
         Assert.assertEquals(123456L, updatedEntity.getId());
         Assert.assertEquals("realApp", updatedEntity.getApplication());
-        Assert.assertEquals("test", updatedEntity.getService());
+        Assert.assertNull(updatedEntity.getService());
 
     }
 
@@ -81,6 +90,40 @@ public class DatastoreRepositoryTest {
         TestEntity event = repository.delete("111111");
         Assert.assertNull(event);
     }
+
+    @Test
+    public void testFilter(){
+        ComplexFilter complexFilter = new FilterBuilder().addFilter(
+                new SimpleFilter("application", FilterConstants.OPERATOR_GREATER_THAN,"test")
+        ).build();
+
+        List<TestEntity> list = repository.filter(complexFilter);
+        Assert.assertNotNull(list);
+        Assert.assertEquals(1, list.size());
+    }
+
+    @Test
+    public void testPage(){
+        List<TestEntity> list = repository.page(new Page(1,1));
+        Assert.assertNotNull(list);
+        Assert.assertEquals(1, list.size());
+    }
+
+    @Test
+    public void testLimit(){
+        List<TestEntity> list = repository.page(new Limit(1));
+        Assert.assertNotNull(list);
+        Assert.assertEquals(1, list.size());
+    }
+
+    @Test
+    public void testSort(){
+        ComplexSort complexSort = new SortBuilder().addSort(new Sort("service", false)).build();
+        List<TestEntity> list = repository.sort(complexSort);
+        Assert.assertNotNull(list);
+        Assert.assertEquals(1, list.size());
+    }
+
 
     private TestEntity createSampleEvent() {
         TestEntity event = new TestEntity();

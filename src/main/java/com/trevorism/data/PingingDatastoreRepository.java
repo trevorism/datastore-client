@@ -1,5 +1,8 @@
 package com.trevorism.data;
 
+import com.trevorism.data.model.filtering.ComplexFilter;
+import com.trevorism.data.model.paging.PageRequest;
+import com.trevorism.data.model.sorting.ComplexSort;
 import com.trevorism.https.SecureHttpClient;
 
 import java.util.List;
@@ -82,5 +85,23 @@ public class PingingDatastoreRepository<T> implements Repository<T> {
     @Override
     public void ping() {
         delegate.ping();
+    }
+
+    @Override
+    public List<T> filter(ComplexFilter filter) {
+        ping();
+        return delegate.filter(filter);
+    }
+
+    @Override
+    public List<T> page(PageRequest page) {
+        ping();
+        return delegate.page(page);
+    }
+
+    @Override
+    public List<T> sort(ComplexSort sort) {
+        ping();
+        return delegate.sort(sort);
     }
 }

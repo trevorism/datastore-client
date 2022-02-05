@@ -26,10 +26,10 @@ repositories {
 
 dependencies {
     implementation 'com.trevorism:secure-http-utils:0.5.0'
-    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.google.code.gson:gson:2.8.9'
     implementation 'commons-beanutils:commons-beanutils:1.9.4'
 
-    testImplementation 'junit:junit:4.13.1'
+    testImplementation 'junit:junit:4.13.2'
 }
 
 check.dependsOn "jacocoTestReport"

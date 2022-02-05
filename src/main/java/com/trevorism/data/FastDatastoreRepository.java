@@ -6,6 +6,10 @@ import com.trevorism.data.deserialize.DatastoreDeserializer;
 import com.trevorism.data.deserialize.Deserializer;
 import com.trevorism.data.exception.CreationFailedException;
 import com.trevorism.data.exception.IdMissingException;
+import com.trevorism.data.exception.InvalidDataOperation;
+import com.trevorism.data.model.filtering.ComplexFilter;
+import com.trevorism.data.model.paging.PageRequest;
+import com.trevorism.data.model.sorting.ComplexSort;
 import com.trevorism.https.DefaultSecureHttpClient;
 import com.trevorism.https.SecureHttpClient;
 
@@ -123,5 +127,35 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     @Override
     public void ping() {
         RequestUtils.ping();
+    }
+
+    @Override
+    public List<T> filter(ComplexFilter filter) {
+        String url = DATASTORE_BASE_URL + "/filter/" + type;
+        String json = gson.toJson(filter);
+        String resultJson = client.post(url, json);
+        if (resultJson.startsWith("<html>"))
+            throw new InvalidDataOperation("Unable to complete this request to filter: " + json);
+        return deserializer.deserializeJsonArray(resultJson, clazz);
+    }
+
+    @Override
+    public List<T> page(PageRequest page) {
+        String url = DATASTORE_BASE_URL + "/page/" + type;
+        String json = gson.toJson(page);
+        String resultJson = client.post(url, json);
+        if (resultJson.startsWith("<html>"))
+            throw new InvalidDataOperation("Unable to complete this request to page: " + json);
+        return deserializer.deserializeJsonArray(resultJson, clazz);
+    }
+
+    @Override
+    public List<T> sort(ComplexSort sort) {
+        String url = DATASTORE_BASE_URL + "/sort/" + type;
+        String json = gson.toJson(sort);
+        String resultJson = client.post(url, json);
+        if (resultJson.startsWith("<html>"))
+            throw new InvalidDataOperation("Unable to complete this request to sort: " + json);
+        return deserializer.deserializeJsonArray(resultJson, clazz);
     }
 }

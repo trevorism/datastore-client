@@ -15,16 +15,16 @@ import java.util.*;
 public class DatastoreDeserializer<T> implements Deserializer<T>{
 
     private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
-    private final JsonParser parser = new JsonParser();
+
 
     @Override
     public T deserializeJsonObject(String jsonObject, Class<T> clazz){
-        return deserialize(parser.parse(jsonObject).getAsJsonObject(), clazz);
+        return deserialize(JsonParser.parseString(jsonObject).getAsJsonObject(), clazz);
     }
 
     @Override
     public List<T> deserializeJsonArray(String jsonArray, Class<T> clazz){
-        return deserialize(parser.parse(jsonArray).getAsJsonArray(), clazz);
+        return deserialize(JsonParser.parseString(jsonArray).getAsJsonArray(), clazz);
     }
 
     private List<T> deserialize(JsonArray json, Class<T> clazz){
@@ -116,7 +116,7 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
 
     private JsonElement removeQuotes(JsonElement value) {
         if(value.toString().startsWith("\"")){
-            return parser.parse(value.getAsString());
+            return JsonParser.parseString(value.getAsString());
         }
         return value;
     }

@@ -1,5 +1,10 @@
 package com.trevorism.data;
 
+import com.trevorism.data.model.filtering.ComplexFilter;
+import com.trevorism.data.model.paging.Page;
+import com.trevorism.data.model.paging.PageRequest;
+import com.trevorism.data.model.sorting.ComplexSort;
+
 import java.util.List;
 
 /**
@@ -23,4 +28,8 @@ public interface Repository<T> {
     T delete(String id, String correlationId);
 
     void ping();
+
+    List<T> filter(ComplexFilter filter);
+    List<T> page(PageRequest page);
+    List<T> sort(ComplexSort sort);
 }
