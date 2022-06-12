@@ -105,7 +105,7 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String json = gson.toJson(itemToUpdate);
         String resultJson = client.put(url, json, correlationId);
-        if (resultJson.startsWith("<html>"))
+        if (resultJson.startsWith("<html>") || resultJson.isEmpty())
             throw new IdMissingException(id, correlationId);
         return deserializer.deserializeJsonObject(resultJson, clazz);
     }
@@ -119,7 +119,7 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     public T delete(String id, String correlationId) {
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String resultJson = client.delete(url, correlationId);
-        if (resultJson.startsWith("<html>"))
+        if (resultJson.startsWith("<html>") || resultJson.isEmpty())
             throw new IdMissingException(id, correlationId);
         return deserializer.deserializeJsonObject(resultJson, clazz);
     }
