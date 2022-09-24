@@ -2,13 +2,9 @@ package com.trevorism.data;
 
 import com.trevorism.http.HttpClient;
 import com.trevorism.http.JsonHttpClient;
-import com.trevorism.http.headers.HeadersHttpClient;
-import com.trevorism.secure.PasswordProvider;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author tbrooks

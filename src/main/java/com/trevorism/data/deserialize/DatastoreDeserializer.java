@@ -16,7 +16,6 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
 
     private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
 
-
     @Override
     public T deserializeJsonObject(String jsonObject, Class<T> clazz){
         return deserialize(JsonParser.parseString(jsonObject).getAsJsonObject(), clazz);
@@ -82,8 +81,6 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
             return value.getAsDouble();
         } else if (type.equals(boolean.class) || type.isAssignableFrom(Boolean.class)) {
             return value.getAsBoolean();
-        } else if (type.equals(char.class) || type.isAssignableFrom(Character.class)) {
-            return value.getAsCharacter();
         } else if (type.isAssignableFrom(Date.class)) {
             return gson.fromJson(value, Date.class);
         } else if (type.isAssignableFrom(List.class)) {
