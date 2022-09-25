@@ -16,7 +16,6 @@ public class SimpleObject {
     private String name;
     private boolean trueFalse;
     private float num;
-    private char one;
 
 
     public static SimpleObject createSample1(){
@@ -25,7 +24,6 @@ public class SimpleObject {
         sample1.name = "sample1";
         sample1.trueFalse = true;
         sample1.num = 4.2f;
-        sample1.one = 'b';
         return sample1;
     }
 
@@ -35,7 +33,6 @@ public class SimpleObject {
         sample2.name = "sample2";
         sample2.trueFalse = true;
         sample2.num = -2.1f;
-        sample2.one = 'f';
         return sample2;
     }
 
@@ -76,11 +73,4 @@ public class SimpleObject {
         this.num = num;
     }
 
-    public char getOne() {
-        return one;
-    }
-
-    public void setOne(char one) {
-        this.one = one;
-    }
 }
