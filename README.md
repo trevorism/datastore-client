@@ -1,5 +1,6 @@
 # datastore-client
 ![Build](https://github.com/trevorism/datastore-client/actions/workflows/build.yml/badge.svg)
+![Coverage](.github/badges/jacoco.svg)
 ![GitHub last commit](https://img.shields.io/github/last-commit/trevorism/datastore-client)
 ![GitHub language count](https://img.shields.io/github/languages/count/trevorism/datastore-client)
 ![GitHub top language](https://img.shields.io/github/languages/top/trevorism/datastore-client)
