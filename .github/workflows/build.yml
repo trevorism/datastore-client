@@ -40,3 +40,8 @@ jobs:
         with:
           arguments: clean build
 
+      - name: JUnit Report Action
+        uses: mikepenz/action-junit-report@v3.5.0
+        if: always()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
