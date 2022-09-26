@@ -41,4 +41,12 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
 }
 
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        html.enabled true
+        xml.destination file("${buildDir}/jacoco/testCoverage.xml")
+    }
+}
+
 check.dependsOn "jacocoTestReport"

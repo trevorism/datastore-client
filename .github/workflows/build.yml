@@ -45,3 +45,10 @@ jobs:
         if: always()
         with:
           report_paths: '**/build/test-results/test/TEST-*.xml'
+
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.3
+        with:
+          paths: build/jacoco/testCoverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
