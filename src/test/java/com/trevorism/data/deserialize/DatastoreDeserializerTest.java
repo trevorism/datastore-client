@@ -26,7 +26,6 @@ public class DatastoreDeserializerTest {
         Assert.assertNull(deserializedList.get(0).getId());
         Assert.assertNull(deserializedList.get(0).getDate());
         Assert.assertNull(deserializedList.get(0).getObjects());
-
     }
 
     @Test
@@ -38,7 +37,6 @@ public class DatastoreDeserializerTest {
         ComplexObject deserialized = deserializer.deserializeJsonObject(json, ComplexObject.class);
 
         Assert.assertEquals(json, deserialized.toString());
-
     }
 
     @Test
@@ -62,7 +60,6 @@ public class DatastoreDeserializerTest {
 
         Assert.assertEquals(gson.toJson(SimpleObject.createSample1()), simpleObjects.get(0).toString());
         Assert.assertEquals(gson.toJson(SimpleObject.createSample2()), simpleObjects.get(1).toString());
-
     }
 
     @Test
@@ -73,7 +70,6 @@ public class DatastoreDeserializerTest {
         MapAndListAsString obj = deserializer.deserializeJsonObject(json, MapAndListAsString.class);
 
         Assert.assertEquals("value", obj.getKeyValue().get("key"));
-
     }
 
     @Test
@@ -85,6 +81,5 @@ public class DatastoreDeserializerTest {
         Assert.assertEquals(2, obj.getItems().size());
         Assert.assertEquals("item1", obj.getItems().get(0));
         Assert.assertEquals("item2", obj.getItems().get(1));
-
     }
 }

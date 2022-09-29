@@ -1,7 +1,5 @@
 package com.trevorism.data.model.sorting;
 
-import com.trevorism.data.model.filtering.SimpleFilter;
-
 import java.util.LinkedList;
 import java.util.List;
 
