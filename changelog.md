@@ -1,3 +1,7 @@
+# 2.7.0
+
+Pinging repo pings a lot less now, just on construction.
+
 # 2.6.0
 
 Lazy loading properties on the default constructor of DatastoreRepository

@@ -12,7 +12,7 @@ Supports classes with primitive types, Dates, Lists and Maps. Classes should hav
 
 
 ## Pinging implementation
-The pinging implementation will ping the datastore API prior to each call.
+The pinging implementation will ping the datastore API on instantiation.
 The datastore API gets torn down, so a ping 'wakes' it up
 ```
 Repository<MyClass> repo = new PingingDatastoreRepository<>(MyClass.class);
@@ -25,8 +25,7 @@ MyClass deleted = repo.delete("id");
 ```
 
 ## Fast implementation
-Alternatively, you can wake up the datastore API with a ping, then perform
-lots of operations. See below.
+If the datastore is awoken, just call it with the fast implementation.
 ```
 Repository<MyClass> repo = new FastDatastoreRepository<>(MyClass.class);
 

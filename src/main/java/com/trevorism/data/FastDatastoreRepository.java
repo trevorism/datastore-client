@@ -29,11 +29,7 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     private final SecureHttpClient client;
 
     public FastDatastoreRepository(Class<T> clazz) {
-        this.clazz = clazz;
-        this.type = clazz.getSimpleName().toLowerCase();
-        this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
-        this.deserializer = new DatastoreDeserializer<>();
-        this.client = new DefaultSecureHttpClient();
+        this(clazz, new DefaultSecureHttpClient());
     }
 
     public FastDatastoreRepository(Class<T> clazz, SecureHttpClient secureHttpClient) {
