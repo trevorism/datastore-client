@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.trevorism.data.deserialize.DatastoreDeserializer;
 import com.trevorism.data.deserialize.Deserializer;
 import com.trevorism.data.exception.CreationFailedException;
-import com.trevorism.data.exception.IdMissingException;
 import com.trevorism.data.exception.InvalidDataOperation;
 import com.trevorism.data.model.filtering.ComplexFilter;
 import com.trevorism.data.model.paging.PageRequest;
@@ -61,9 +60,6 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     public T get(String id, String correlationId) {
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String resultJson = client.get(url, correlationId);
-        if (resultJson.startsWith("<html>"))
-            throw new IdMissingException(id, correlationId);
-
         return deserializer.deserializeJsonObject(resultJson, clazz);
     }
 
@@ -101,8 +97,6 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String json = gson.toJson(itemToUpdate);
         String resultJson = client.put(url, json, correlationId);
-        if (resultJson.startsWith("<html>") || resultJson.isEmpty())
-            throw new IdMissingException(id, correlationId);
         return deserializer.deserializeJsonObject(resultJson, clazz);
     }
 
@@ -115,8 +109,6 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     public T delete(String id, String correlationId) {
         String url = DATASTORE_BASE_URL + "/api/" + type + "/" + id;
         String resultJson = client.delete(url, correlationId);
-        if (resultJson.startsWith("<html>") || resultJson.isEmpty())
-            throw new IdMissingException(id, correlationId);
         return deserializer.deserializeJsonObject(resultJson, clazz);
     }
 
@@ -130,8 +122,6 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         String url = DATASTORE_BASE_URL + "/filter/" + type;
         String json = gson.toJson(filter);
         String resultJson = client.post(url, json);
-        if (resultJson.startsWith("<html>"))
-            throw new InvalidDataOperation("Unable to complete this request to filter: " + json);
         return deserializer.deserializeJsonArray(resultJson, clazz);
     }
 
@@ -140,8 +130,6 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         String url = DATASTORE_BASE_URL + "/page/" + type;
         String json = gson.toJson(page);
         String resultJson = client.post(url, json);
-        if (resultJson.startsWith("<html>"))
-            throw new InvalidDataOperation("Unable to complete this request to page: " + json);
         return deserializer.deserializeJsonArray(resultJson, clazz);
     }
 
@@ -150,8 +138,6 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         String url = DATASTORE_BASE_URL + "/sort/" + type;
         String json = gson.toJson(sort);
         String resultJson = client.post(url, json);
-        if (resultJson.startsWith("<html>"))
-            throw new InvalidDataOperation("Unable to complete this request to sort: " + json);
         return deserializer.deserializeJsonArray(resultJson, clazz);
     }
 }

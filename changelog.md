@@ -1,3 +1,7 @@
+# 2.8.0
+
+Update dependencies.
+
 # 2.7.0
 
 Pinging repo pings a lot less now, just on construction.

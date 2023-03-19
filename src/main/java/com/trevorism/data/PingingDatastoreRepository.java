@@ -11,8 +11,8 @@ public class PingingDatastoreRepository<T> extends FastDatastoreRepository<T> {
         super(clazz);
     }
 
-    public PingingDatastoreRepository(Class<T> clazz, SecureHttpClient secureHttpClient) {
-        super(clazz, secureHttpClient);
+    public PingingDatastoreRepository(Class<T> clazz, SecureHttpClient httpClient) {
+        super(clazz, httpClient);
         ping();
     }
 
