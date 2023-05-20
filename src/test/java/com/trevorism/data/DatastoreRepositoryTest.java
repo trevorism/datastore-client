@@ -1,5 +1,6 @@
 package com.trevorism.data;
 
+import com.trevorism.data.exception.DataOperationException;
 import com.trevorism.data.model.filtering.ComplexFilter;
 import com.trevorism.data.model.filtering.FilterBuilder;
 import com.trevorism.data.model.filtering.FilterConstants;
@@ -70,13 +71,13 @@ public class DatastoreRepositoryTest {
 
     }
 
-    @Test(expected = InvalidRequestException.class)
+    @Test(expected = DataOperationException.class)
     public void getMissingId() {
         TestEntity event = repository.get("111111");
         Assert.assertNull(event);
     }
 
-    @Test(expected = InvalidRequestException.class)
+    @Test(expected = DataOperationException.class)
     public void updateMissingId() {
         TestEntity event = new TestEntity();
         event.setApplication("realApp");
@@ -85,7 +86,7 @@ public class DatastoreRepositoryTest {
         Assert.assertNull(event2);
     }
 
-    @Test(expected = InvalidRequestException.class)
+    @Test(expected = DataOperationException.class)
     public void deleteMissingId() {
         TestEntity event = repository.delete("111111");
         Assert.assertNull(event);

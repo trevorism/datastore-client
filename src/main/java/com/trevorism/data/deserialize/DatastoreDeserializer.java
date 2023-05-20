@@ -1,6 +1,7 @@
 package com.trevorism.data.deserialize;
 
 import com.google.gson.*;
+import com.trevorism.data.exception.DeserializationException;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import java.beans.PropertyDescriptor;
@@ -41,7 +42,7 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
             setPropertiesOnNewInstance(json, newInstance);
             return newInstance;
         }catch (Exception e){
-            throw new RuntimeException("Unable to deserialize " + json + " into " + clazz, e);
+            throw new DeserializationException("Unable to deserialize " + json + " into " + clazz, e);
         }
     }
 
@@ -60,7 +61,7 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
         PropertyDescriptor pd = PropertyUtils.getPropertyDescriptor(t, key);
         if(pd == null){
             for (PropertyDescriptor descriptor : PropertyUtils.getPropertyDescriptors(t)) {
-                if(key.toLowerCase().equals(descriptor.getName().toLowerCase())){
+                if(key.equalsIgnoreCase(descriptor.getName())){
                     return descriptor;
                 }
             }

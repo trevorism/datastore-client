@@ -8,6 +8,8 @@ public class FilterBuilder {
 
     private final List<SimpleFilter> simpleFilterList = new LinkedList<>();
 
+    public FilterBuilder(){}
+    
     public FilterBuilder addFilter(SimpleFilter simpleFilter){
         simpleFilterList.add(simpleFilter);
         return this;

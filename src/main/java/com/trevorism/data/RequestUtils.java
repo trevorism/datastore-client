@@ -11,13 +11,12 @@ import java.util.List;
  */
 final class RequestUtils {
 
-    static final String DATASTORE_BASE_URL = "https://datastore.trevorism.com";
-    private static final HttpClient client = new JsonHttpClient();
+    static final String DATASTORE_BASE_URL = "https://datastore.data.trevorism.com";
     private static final List<Long> retryWaits = Arrays.asList(1000L, 5000L, 10000L, 15000L);
 
     private RequestUtils(){}
 
-    static void ping() {
+    static void ping(HttpClient client) {
         for(Long retryWait : retryWaits){
             try {
                 //ping the API to wake it up since it is not always on

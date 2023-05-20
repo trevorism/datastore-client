@@ -33,10 +33,10 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.trevorism:secure-http-utils:2.0.1'
+    api 'com.trevorism:secure-http-utils:3.0.1'
     implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'commons-beanutils:commons-beanutils:1.9.4'
-
+    implementation 'org.slf4j:slf4j-nop:2.0.6'
     testImplementation 'junit:junit:4.13.2'
 }
 
