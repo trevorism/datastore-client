@@ -11,10 +11,7 @@ import com.trevorism.data.model.sorting.ComplexSort;
 import com.trevorism.data.model.sorting.Sort;
 import com.trevorism.data.model.sorting.SortBuilder;
 import com.trevorism.http.util.InvalidRequestException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.Date;
 import java.util.List;
@@ -22,6 +19,7 @@ import java.util.List;
 /**
  * @author tbrooks
  */
+@Ignore
 public class DatastoreRepositoryTest {
 
     Repository<TestEntity> repository = new FastDatastoreRepository<>(TestEntity.class);

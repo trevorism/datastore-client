@@ -9,7 +9,7 @@ import com.trevorism.data.exception.DataOperationException;
 import com.trevorism.data.model.filtering.ComplexFilter;
 import com.trevorism.data.model.paging.PageRequest;
 import com.trevorism.data.model.sorting.ComplexSort;
-import com.trevorism.https.DefaultSecureHttpClient;
+import com.trevorism.https.AppClientSecureHttpClient;
 import com.trevorism.https.SecureHttpClient;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     private final SecureHttpClient client;
 
     public FastDatastoreRepository(Class<T> clazz) {
-        this(clazz, new DefaultSecureHttpClient());
+        this(clazz, new AppClientSecureHttpClient());
     }
 
     public FastDatastoreRepository(Class<T> clazz, SecureHttpClient secureHttpClient) {
