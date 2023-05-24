@@ -16,10 +16,6 @@ import org.junit.*;
 import java.util.Date;
 import java.util.List;
 
-/**
- * @author tbrooks
- */
-@Ignore
 public class DatastoreRepositoryTest {
 
     Repository<TestEntity> repository = new FastDatastoreRepository<>(TestEntity.class);
