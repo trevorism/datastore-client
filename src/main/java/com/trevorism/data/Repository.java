@@ -12,6 +12,7 @@ import java.util.List;
  */
 public interface Repository<T> {
 
+    List<T> all();
     List<T> list();
 
     T get(String id);

@@ -40,6 +40,18 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     }
 
     @Override
+    public List<T> all() {
+        String url = DATASTORE_BASE_URL + "/all/" + type;
+        try {
+            SecureHttpClient appClient = new AppClientSecureHttpClient();
+            String json = appClient.get(url);
+            return deserializer.deserializeJsonArray(json, clazz);
+        } catch (Exception e) {
+            throw new DataOperationException("Unable to HTTP GET: " + url, e);
+        }
+    }
+
+    @Override
     public List<T> list() {
         String url = DATASTORE_BASE_URL + "/object/" + type;
         String json = safeHttpGet(url);

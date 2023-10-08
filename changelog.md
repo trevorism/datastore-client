@@ -1,3 +1,15 @@
+# 3.2.0
+
+Add all endpoint for tenant administration.
+
+# 3.1.0
+
+Update to latest version of secure-http-utils.
+
+# 3.0.0
+
+Migrate to data.datastore.trevorism.com and update interfaces. Improve error handling.
+
 # 2.8.0
 
 Update dependencies.
