@@ -7,11 +7,16 @@ import com.trevorism.data.deserialize.Deserializer;
 import com.trevorism.data.exception.CreationFailedException;
 import com.trevorism.data.exception.DataOperationException;
 import com.trevorism.data.model.filtering.ComplexFilter;
+import com.trevorism.data.model.filtering.FilterBuilder;
+import com.trevorism.data.model.filtering.SimpleFilter;
 import com.trevorism.data.model.paging.PageRequest;
 import com.trevorism.data.model.sorting.ComplexSort;
+import com.trevorism.data.model.sorting.Sort;
+import com.trevorism.data.model.sorting.SortBuilder;
 import com.trevorism.https.AppClientSecureHttpClient;
 import com.trevorism.https.SecureHttpClient;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.trevorism.data.RequestUtils.DATASTORE_BASE_URL;
@@ -34,7 +39,7 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     public FastDatastoreRepository(Class<T> clazz, SecureHttpClient secureHttpClient) {
         this.clazz = clazz;
         this.type = clazz.getSimpleName().toLowerCase();
-        this.gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
+        this.gson = new GsonBuilder().disableHtmlEscaping().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
         this.deserializer = new DatastoreDeserializer<>();
         this.client = secureHttpClient;
     }
@@ -113,6 +118,11 @@ public class FastDatastoreRepository<T> implements Repository<T> {
     }
 
     @Override
+    public List<T> filter(SimpleFilter filter) {
+        return filter(new FilterBuilder().addFilter(filter).build());
+    }
+
+    @Override
     public List<T> page(PageRequest page) {
         String url = DATASTORE_BASE_URL + "/page/" + type;
         String json = gson.toJson(page);
@@ -126,6 +136,11 @@ public class FastDatastoreRepository<T> implements Repository<T> {
         String json = gson.toJson(sort);
         String resultJson = safeHttpPost(url, json);
         return deserializer.deserializeJsonArray(resultJson, clazz);
+    }
+
+    @Override
+    public List<T> sort(Sort sort) {
+        return sort(new SortBuilder().addSort(sort).build());
     }
 
     private String safeHttpGet(String url) {

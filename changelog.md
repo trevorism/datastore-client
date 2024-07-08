@@ -1,3 +1,7 @@
+# 3.3.0
+
+Add some convience methods to the repository for simple filtering and sorting.
+
 # 3.2.0
 
 Add all endpoint for tenant administration.

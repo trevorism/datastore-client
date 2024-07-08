@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class ComplexObject {
 
-    private static final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
+    private static final Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
 
     private String id;
     private Date date;

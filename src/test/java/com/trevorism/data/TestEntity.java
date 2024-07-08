@@ -7,7 +7,6 @@ import java.util.Date;
  */
 public class TestEntity {
 
-
     private long id;
     private Date date;
     private String application;

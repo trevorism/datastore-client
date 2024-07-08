@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class DatastoreDeserializer<T> implements Deserializer<T>{
 
-    private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
+    private final Gson gson = new GsonBuilder().disableHtmlEscaping().setDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").create();
 
     @Override
     public T deserializeJsonObject(String jsonObject, Class<T> clazz){

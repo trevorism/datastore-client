@@ -8,13 +8,13 @@ public class SortBuilder {
 
     private final List<Sort> sorts = new LinkedList<>();
 
-    public SortBuilder addSort(Sort simpleFilter){
-        sorts.add(simpleFilter);
+    public SortBuilder addSort(Sort simpleSort){
+        sorts.add(simpleSort);
         return this;
     }
 
-    public SortBuilder addSort(Sort... simpleFilters){
-        sorts.addAll(Arrays.asList(simpleFilters));
+    public SortBuilder addSort(Sort... simpleSorts){
+        sorts.addAll(Arrays.asList(simpleSorts));
         return this;
     }
 

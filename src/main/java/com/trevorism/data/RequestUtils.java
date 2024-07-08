@@ -1,7 +1,6 @@
 package com.trevorism.data;
 
 import com.trevorism.http.HttpClient;
-import com.trevorism.http.JsonHttpClient;
 
 import java.util.Arrays;
 import java.util.List;

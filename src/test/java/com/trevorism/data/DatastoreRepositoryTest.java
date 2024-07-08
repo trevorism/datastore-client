@@ -10,47 +10,49 @@ import com.trevorism.data.model.paging.Page;
 import com.trevorism.data.model.sorting.ComplexSort;
 import com.trevorism.data.model.sorting.Sort;
 import com.trevorism.data.model.sorting.SortBuilder;
-import com.trevorism.http.util.InvalidRequestException;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
 import java.util.List;
 
 public class DatastoreRepositoryTest {
 
-    Repository<TestEntity> repository = new FastDatastoreRepository<>(TestEntity.class);
+    Repository<TestEntity> repository;
 
-    @Before
+    @BeforeEach
     public void setup() {
+        repository = new FastDatastoreRepository<>(TestEntity.class, new StubSecureHttpClient());
         repository.ping();
         TestEntity event = createSampleEvent();
         TestEntity createdEvent = repository.create(event);
-        Assert.assertEquals(event.getId(), createdEvent.getId());
-        Assert.assertEquals(event.getVersion(), createdEvent.getVersion());
-        Assert.assertEquals(event.getService(), createdEvent.getService());
-        Assert.assertEquals(event.getApplication(), createdEvent.getApplication());
+        assertEquals(event.getId(), createdEvent.getId());
+        assertEquals(event.getVersion(), createdEvent.getVersion());
+        assertEquals(event.getService(), createdEvent.getService());
+        assertEquals(event.getApplication(), createdEvent.getApplication());
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         repository.delete("123456");
     }
 
     @Test
     public void list() throws InterruptedException {
-        Thread.sleep(1000);
         List<TestEntity> list = repository.list();
-        Assert.assertNotNull(list);
-        Assert.assertEquals(1, list.size());
+        assertNotNull(list);
+        assertEquals(1, list.size());
     }
 
     @Test
     public void get() {
         TestEntity event = repository.get("123456");
-        Assert.assertEquals(123456L, event.getId());
-        Assert.assertNull(event.getVersion());
-        Assert.assertEquals("test", event.getService());
-        Assert.assertEquals("testApp", event.getApplication());
+        assertEquals(123456L, event.getId());
+        assertNull(event.getVersion());
+        assertEquals("test", event.getService());
+        assertEquals("testApp", event.getApplication());
     }
 
     @Test
@@ -59,31 +61,28 @@ public class DatastoreRepositoryTest {
         event.setApplication("realApp");
         event.setId(1488418);
         TestEntity updatedEntity = repository.update("123456", event);
-        Assert.assertEquals(123456L, updatedEntity.getId());
-        Assert.assertEquals("realApp", updatedEntity.getApplication());
-        Assert.assertNull(updatedEntity.getService());
+        assertEquals(123456L, updatedEntity.getId());
+        assertEquals("realApp", updatedEntity.getApplication());
+        assertNull(updatedEntity.getService());
 
     }
 
-    @Test(expected = DataOperationException.class)
+    @Test
     public void getMissingId() {
-        TestEntity event = repository.get("111111");
-        Assert.assertNull(event);
+        assertThrows(DataOperationException.class, () -> repository.get("111111"));
     }
 
-    @Test(expected = DataOperationException.class)
+    @Test
     public void updateMissingId() {
         TestEntity event = new TestEntity();
         event.setApplication("realApp");
 
-        TestEntity event2 = repository.update("111111", event);
-        Assert.assertNull(event2);
+        assertThrows(DataOperationException.class, () -> repository.update("111111", event));
     }
 
-    @Test(expected = DataOperationException.class)
+    @Test
     public void deleteMissingId() {
-        TestEntity event = repository.delete("111111");
-        Assert.assertNull(event);
+        assertThrows(DataOperationException.class, () ->  repository.delete("111111"));
     }
 
     @Test
@@ -93,34 +92,34 @@ public class DatastoreRepositoryTest {
         ).build();
 
         List<TestEntity> list = repository.filter(complexFilter);
-        Assert.assertNotNull(list);
-        Assert.assertEquals(1, list.size());
+        assertNotNull(list);
+        assertEquals(1, list.size());
     }
 
     @Test
     public void testPage() {
         List<TestEntity> list = repository.page(new Page(1, 1));
-        Assert.assertNotNull(list);
-        Assert.assertEquals(1, list.size());
+        assertNotNull(list);
+        assertEquals(1, list.size());
     }
 
     @Test
     public void testLimit() {
         List<TestEntity> list = repository.page(new Limit(1));
-        Assert.assertNotNull(list);
-        Assert.assertEquals(1, list.size());
+        assertNotNull(list);
+        assertEquals(1, list.size());
     }
 
     @Test
     public void testSort() {
         ComplexSort complexSort = new SortBuilder().addSort(new Sort("service", false)).build();
         List<TestEntity> list = repository.sort(complexSort);
-        Assert.assertNotNull(list);
-        Assert.assertEquals(1, list.size());
+        assertNotNull(list);
+        assertEquals(1, list.size());
     }
 
 
-    private TestEntity createSampleEvent() {
+    public static TestEntity createSampleEvent() {
         TestEntity event = new TestEntity();
         event.setDate(new Date());
         event.setId(123456L);
