@@ -1,6 +1,8 @@
-# 3.3.0
+# 4.0.0
 
-Add some convience methods to the repository for simple filtering and sorting.
+Add some convenience methods to the repository for simple filtering and sorting.
+
+Fixed bug with filtering. HTML characters like '>' and '<' are no longer being escaped by gson.
 
 # 3.2.0
 
