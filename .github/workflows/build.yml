@@ -9,39 +9,7 @@ on:
 permissions: write-all
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up JDK 8
-        uses: actions/setup-java@v3
-        with:
-          java-version: '8'
-          distribution: 'adopt'
-          cache: 'gradle'
-
-      - name: Chmod gradlew
-        run: chmod +x ./gradlew
-
-      - name: Create secrets file
-        uses: Amadevus/pwsh-script@v2
-        id: script
-        with:
-          script: |
-            Add-Content -Path .\src\test\resources\secrets.properties -Value 'clientId=${{ secrets.TEST_CLIENT_ID }}'
-            Add-Content -Path .\src\test\resources\secrets.properties -Value 'clientSecret=${{ secrets.TEST_SECRET_ID }}'
-
-      - name: Build with Gradle
-        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          arguments: clean build
-
-      - name: JUnit Report Action
-        uses: mikepenz/action-junit-report@v3.5.0
-        if: always()
-        with:
-          report_paths: '**/build/test-results/test/TEST-*.xml'
+  call-build:
+    uses: trevorism/actions-workflows/.github/workflows/build.yml@master
+    with:
+      JDK_VERSION: 17
