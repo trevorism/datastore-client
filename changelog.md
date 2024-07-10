@@ -1,3 +1,7 @@
+# 4.1.0
+
+Fix call for /all. Every call should defer to passed in http client.
+
 # 4.0.0
 
 Add some convenience methods to the repository for simple filtering and sorting.
