@@ -1,3 +1,9 @@
+# 4.2.0
+
+Deserialize properties typed as a nested object. Datastore flattens lists and maps to JSON text, and
+previously only List and Map properties were unflattened; a property typed as another object had the
+raw JSON text pushed into its setter and threw. Both the flattened and the native shape now work.
+
 # 4.1.0
 
 Fix call for /all. Every call should defer to passed in http client.

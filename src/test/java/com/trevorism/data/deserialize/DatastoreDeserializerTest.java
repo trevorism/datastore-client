@@ -83,4 +83,48 @@ public class DatastoreDeserializerTest {
         assertEquals("item1", obj.getItems().get(0));
         assertEquals("item2", obj.getItems().get(1));
     }
+
+    @Test
+    public void deserializeStringIntoNestedPojo(){
+        String json = "{\"label\":\"outer\",\"inner\":\"{\\\"name\\\":\\\"in\\\",\\\"count\\\":3}\"}";
+
+        DatastoreDeserializer<NestedPojoHolder> deserializer = new DatastoreDeserializer<>();
+        NestedPojoHolder obj = deserializer.deserializeJsonObject(json, NestedPojoHolder.class);
+
+        assertEquals("outer", obj.getLabel());
+        assertEquals("in", obj.getInner().getName());
+        assertEquals(3, obj.getInner().getCount());
+    }
+
+    @Test
+    public void deserializeNativeNestedPojo(){
+        String json = "{\"label\":\"outer\",\"inner\":{\"name\":\"in\",\"count\":3}}";
+
+        DatastoreDeserializer<NestedPojoHolder> deserializer = new DatastoreDeserializer<>();
+        NestedPojoHolder obj = deserializer.deserializeJsonObject(json, NestedPojoHolder.class);
+
+        assertEquals("outer", obj.getLabel());
+        assertEquals("in", obj.getInner().getName());
+        assertEquals(3, obj.getInner().getCount());
+    }
+
+    @Test
+    public void deserializeCaseFoldedPropertyNames(){
+        String json = "{\"keyvalue\":\"{\\\"key\\\": \\\"value\\\"}\"}";
+
+        DatastoreDeserializer<MapAndListAsString> deserializer = new DatastoreDeserializer<>();
+        MapAndListAsString obj = deserializer.deserializeJsonObject(json, MapAndListAsString.class);
+
+        assertEquals("value", obj.getKeyValue().get("key"));
+    }
+
+    @Test
+    public void deserializeNumberIntoStringProperty(){
+        String json = "{\"label\":5}";
+
+        DatastoreDeserializer<NestedPojoHolder> deserializer = new DatastoreDeserializer<>();
+        NestedPojoHolder obj = deserializer.deserializeJsonObject(json, NestedPojoHolder.class);
+
+        assertEquals("5", obj.getLabel());
+    }
 }

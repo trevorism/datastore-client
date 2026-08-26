@@ -88,9 +88,15 @@ public class DatastoreDeserializer<T> implements Deserializer<T>{
             return handleListType(value, descriptor);
         } else if (type.isAssignableFrom(Map.class)) {
             return handleMapType(value);
+        } else if (type.equals(String.class)) {
+            return value.getAsString();
         }
 
-        return value.getAsString();
+        return handleObjectType(value, type);
+    }
+
+    private Object handleObjectType(JsonElement value, Class<?> type) {
+        return gson.fromJson(removeQuotes(value), type);
     }
 
     private Object handleMapType(JsonElement value) {
