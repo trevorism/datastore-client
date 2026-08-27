@@ -11,5 +11,3 @@ permissions: write-all
 jobs:
   call-build:
     uses: trevorism/actions-workflows/.github/workflows/build.yml@master
-    with:
-      JDK_VERSION: 17
